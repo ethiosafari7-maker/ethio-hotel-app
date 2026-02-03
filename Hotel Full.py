@@ -60,11 +60,11 @@ print(f"      {current_time}")
 print(f"{GREEN}============================================================={RESET}")
 print(f"       {BG_BLUE}{B_WHITE} 🍎🍉🍋🇪🇹WELCOME TO ETHIO HOTEL🥬☕️🥂🇪🇹{RESET}")
 print(f"=============================================================={RED}{RESET}")
-first_name = input("    Enter First Name: ")
-last_name = input("    Enter Second Name: ")
+first_name = st.text_input("    Enter First Name: ")
+last_name = st.text_input("    Enter Second Name: ")
 # የስልክ ቁጥር ማረጋገጫ (Validation Loop)
 while True:
-    phone = input("    Enter Phone number (10 digits): ")
+    phone = int(st.text_input("    Enter Phone number (10 digits): ")
     
     # .isdigit() ቁጥር መሆኑን ያረጋግጣል፣ len() ደግሞ ርዝመቱን ያረጋግጣል
     if phone.isdigit() and len(phone) == 10:
@@ -87,12 +87,12 @@ while True:
     print("    5. FINISH & SHOW TOTAL BILL")
     print("    ="*40)
     
-    menu = input("    Please enter your choice (1-5): ")
+    menu = st.text_input("    Please enter your choice (1-5): ")
 
     # --- 1. ETHIOPIAN FOOD ---
     if menu == '1':
         print("    \n   1. Vegetable (30 Birr)    \n   2. Meat Foods (150 Birr)\n   3. Traditional (40 Birr)\n   4. Drinks (30 Birr)")
-        category = input("   Choose category: ")
+        category = st.text_input("   Choose category: ")
         price = 0
         if category == '1': price = 30
         elif category == '2': price = 150
@@ -100,14 +100,14 @@ while True:
         elif category == '4': price = 30
         
         if price > 0:
-            qty = int(input("   Enter quantity: "))
+            qty = int(st.text_input("   Enter quantity: "))
             total_bill += (price * qty)
             print(f"   Added! Subtotal: {price * qty} Birr")
 
     # --- 2. CHINESE FOOD ---
     elif menu == '2':
         print("\n   1. Lamian (80 Birr)\n   2. Pasta (65 Birr)\n   3. Rice (70 Birr)\n   4. Drinks (20 Birr)")
-        category = input("   Choose category: ")
+        category = st.text_input("   Choose category: ")
         price = 0
         if category == '1': price = 80
         elif category == '2': price = 65
@@ -115,35 +115,35 @@ while True:
         elif category == '4': price = 20
         
         if price > 0:
-            qty = int(input("   Enter quantity: "))
+            qty = int(st.text_input("   Enter quantity: "))
             total_bill += (price * qty)
             print(f"   Added! Subtotal: {price * qty} Birr")
 
     # --- 3. AMERICAN FOOD ---
     elif menu == '3':
         print("\n   1. Cheeseburger (350 Birr)\n   2. Salad (80 Birr)\n   3. Drinks (25 Birr)")
-        category = input("   Choose category: ")
+        category = st.text_input("   Choose category: ")
         price = 0
         if category == '1': price = 350
         elif category == '2': price = 80
         elif category == '3': price = 25
         
         if price > 0:
-            qty = int(input("   Enter quantity: "))
+            qty = int(st.text_input("   Enter quantity: "))
             total_bill += (price * qty)
             print(f"   Added! Subtotal: {price * qty} Birr")
 
     # --- 4. ROOM RENT ---
     elif menu == '4':
         print("\n   1. First Floor (230 Birr)\n   2. Second Floor (280 Birr)\n   3. Third Floor (200 Birr)\n   4. Fourth Floor (380 Birr)")
-        floor = input("   Choose Floor: ")
+        floor = st.text_input("   Choose Floor: ")
         price = 0
         if floor == '1': price = 230
         elif floor == '2': price = 280
         elif floor == '3': price = 200
         elif floor == '4': price = 380
         if price > 0:
-            qty = int(input("   Enter Number of Days: "))
+            qty = int(st.text_input("   Enter Number of Days: "))
             total_bill += (price * qty)
             print(f"   Room booked! Subtotal: {price * qty} Birr")
 
