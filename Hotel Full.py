@@ -65,5 +65,33 @@ elif menu == "4. ROOM RENT":
     floor = st.selectbox("ፎቅ ይምረጡ", 
                          ["1st Floor (230)", "2nd Floor (280)", "3rd Floor (200)", "4th Floor (380)"], key="room_cat")
     price = int(floor.split('(')[1].split(')')[0])
-    qty = st.number_input("የቀናት ብዛት", min_value=1, value=1, step=1
+    qty = st.number_input("የቀናት ብዛት", min_value=1, value=1, step=1, key="room_qty")
+    if st.button("ክፍል ያዝ", key="btn4"):
+        st.session_state.total_bill += (price * qty)
+        st.success(f"ክፍል ተይዟል! ጠቅላላ ሂሳብ: {st.session_state.total_bill} Birr")
 
+# --- ደረሰኝ እና ሂሳብ ማሳያ ---
+st.divider()
+st.markdown(f"### 💰 ጠቅላላ ሂሳብ: `{st.session_state.total_bill}` Birr")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    if st.button("🧾 ደረሰኝ አውጣ (Receipt)", key="finish_btn"):
+        if first_name and len(phone) == 10 and phone.isdigit():
+            st.balloons()
+            st.info(f"""
+            **🧾 RECEIPT - ETHIO HOTEL** **Customer:** {first_name} {last_name}  
+            **Phone:** {phone}  
+            **Total Paid:** {st.session_state.total_bill} Birr  
+            ---
+            *ስለመጡ እናመሰግናለን!*
+            """)
+            save_to_history(first_name, phone, st.session_state.total_bill)
+        else:
+            st.error("እባክዎ ስም እና 10 አሃዝ ስልክ ቁጥር በትክክል ያስገቡ!")
+
+with col2:
+    if st.button("🔄 አዲስ ትዕዛዝ (Reset)", key="reset_all"):
+        st.session_state.total_bill = 0
+        st.rerun()
