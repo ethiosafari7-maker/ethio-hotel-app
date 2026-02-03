@@ -65,7 +65,7 @@ first_name = st.text_input("    Enter First Name: ")
 last_name = st.text_input("    Enter Second Name: ")
 # የስልክ ቁጥር ማረጋገጫ (Validation Loop)
 while True:
-    phone = int(st.text_input("    Enter Phone number (10 digits): "))
+    phone = st.number_input("    Enter Phone number (10 digits): ")
     
     # .isdigit() ቁጥር መሆኑን ያረጋግጣል፣ len() ደግሞ ርዝመቱን ያረጋግጣል
     if phone.isdigit() and len(phone) == 10:
@@ -101,7 +101,7 @@ while True:
         elif category == '4': price = 30
         
         if price > 0:
-            qty = int(st.text_input("   Enter quantity: "))
+            qty = st.number_input("   Enter quantity: ")
             total_bill += (price * qty)
             print(f"   Added! Subtotal: {price * qty} Birr")
 
@@ -116,7 +116,7 @@ while True:
         elif category == '4': price = 20
         
         if price > 0:
-            qty = int(st.text_input("   Enter quantity: "))
+            qty = st.number_input("   Enter quantity: ")
             total_bill += (price * qty)
             print(f"   Added! Subtotal: {price * qty} Birr")
 
@@ -130,7 +130,7 @@ while True:
         elif category == '3': price = 25
         
         if price > 0:
-            qty = int(st.text_input("   Enter quantity: "))
+            qty = st.number_input("   Enter quantity: ")
             total_bill += (price * qty)
             print(f"   Added! Subtotal: {price * qty} Birr")
 
@@ -144,7 +144,7 @@ while True:
         elif floor == '3': price = 200
         elif floor == '4': price = 380
         if price > 0:
-            qty = int(st.text_input("   Enter Number of Days: "))
+            qty = st.number_input("   Enter Number of Days: ")
             total_bill += (price * qty)
             print(f"   Room booked! Subtotal: {price * qty} Birr")
 
