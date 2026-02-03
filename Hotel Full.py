@@ -1,97 +1,92 @@
 import streamlit as st
 import time
+import urllib.parse
 
-# 1. የታሪክ ማስቀመጫ ፈንክሽን
-def save_to_history(name, phone, amount):
-    current_time = time.ctime()
-    try:
-        with open("hotel_history.txt", "a", encoding="utf-8") as file:
-            file.write(f"{'-'*40}\nDate: {current_time}\nCustomer: {name}\nPhone: {phone}\nTotal: {amount} Birr\n{'-'*40}\n\n")
-    except:
-        pass
+# 1. የገጽታ ቅንብር
+st.set_page_config(page_title="Ethio Hotel", page_icon="🏨", layout="centered")
+st.markdown("<h1 style='text-align: center; color: #2E7D32;'>🏨 WELCOME TO ETHIO HOTEL 🇪🇹</h1>", unsafe_allow_html=True)
 
-# የዌብሳይቱ ገጽታ እና ርዕስ
-st.set_page_config(page_title="Ethio Hotel", page_icon="🏨")
-st.markdown("<h1 style='text-align: center; color: green;'>🏨 WELCOME TO ETHIO HOTEL 🇪🇹</h1>", unsafe_allow_html=True)
-st.write(f"📅 **Date:** {time.ctime()}")
-
-# የሂሳብ መያዣ (Session State) - ሂሳቡ እንዳይጠፋ
+# 2. የሂሳብ እና የትዕዛዝ ዝርዝር መያዣ (Session State)
+if 'cart' not in st.session_state:
+    st.session_state.cart = []
 if 'total_bill' not in st.session_state:
     st.session_state.total_bill = 0
 
 # --- የደንበኛ መረጃ (Sidebar) ---
-st.sidebar.header("📋 የደንበኛ መረጃ")
+st.sidebar.header("👤 የደንበኛ መረጃ")
 first_name = st.sidebar.text_input("First Name", key="fname")
-last_name = st.sidebar.text_input("Second Name", key="lname")
-phone = st.sidebar.text_input("Phone number (10 digits)", key="u_phone")
+phone = st.sidebar.text_input("Phone Number", key="u_phone")
 
 # --- አገልግሎቶች ---
-st.header("🍴 አገልግሎታችንን ይምረጡ")
-menu = st.selectbox("የአገልግሎት አይነት", 
-                    ["ይምረጡ", "1. ETHIOPIAN FOOD", "2. CHINESE FOOD", "3. AMERICAN FOOD", "4. ROOM RENT"], key="main_menu")
+st.header("🍴 ምግብና አገልግሎቶችን ይምረጡ")
+menu_option = st.selectbox("የአገልግሎት አይነት", 
+                    ["ይምረጡ", "ETHIOPIAN FOOD", "CHINESE FOOD", "AMERICAN FOOD", "ROOM RENT"], key="main_menu")
 
-# --- 1. ETHIOPIAN FOOD ---
-if menu == "1. ETHIOPIAN FOOD":
-    category = st.selectbox("ምግብ ይምረጡ", 
-                            ["Vegetable (30)", "Meat Foods (150)", "Traditional (40)", "Drinks (30)"], key="eth_cat")
-    price = int(category.split('(')[1].split(')')[0])
-    qty = st.number_input("ብዛት", min_value=1, value=1, step=1, key="eth_qty")
-    if st.button("ወደ ሂሳብ ጨምር", key="btn1"):
-        st.session_state.total_bill += (price * qty)
-        st.success(f"ታዟል! ለጊዜው ጠቅላላ ሂሳብ: {st.session_state.total_bill} Birr")
+# የምግብ ዋጋዎች ዝርዝር
+items_dict = {
+    "ETHIOPIAN FOOD": {"Vegetable": 30, "Meat Foods": 150, "Traditional": 40, "Drinks": 30},
+    "CHINESE FOOD": {"Lamian": 80, "Pasta": 65, "Rice": 70, "Drinks": 20},
+    "AMERICAN FOOD": {"Cheeseburger": 350, "Salad": 80, "Drinks": 25},
+    "ROOM RENT": {"1st Floor": 230, "2nd Floor": 280, "3rd Floor": 200, "4th Floor": 380}
+}
 
-# --- 2. CHINESE FOOD ---
-elif menu == "2. CHINESE FOOD":
-    category = st.selectbox("የቻይና ምግብ ይምረጡ", 
-                            ["Lamian (80)", "Pasta (65)", "Rice (70)", "Drinks (20)"], key="chi_cat")
-    price = int(category.split('(')[1].split(')')[0])
-    qty = st.number_input("ብዛት", min_value=1, value=1, step=1, key="chi_qty")
-    if st.button("ወደ ሂሳብ ጨምር", key="btn2"):
-        st.session_state.total_bill += (price * qty)
-        st.success(f"ታዟል! ለጊዜው ጠቅላላ ሂሳብ: {st.session_state.total_bill} Birr")
+if menu_option in items_dict:
+    options = list(items_dict[menu_option].keys())
+    selected_item = st.selectbox(f"{menu_option} ይምረጡ", options)
+    price = items_dict[menu_option][selected_item]
+    qty = st.number_input("ብዛት", min_value=1, value=1, step=1)
+    
+    if st.button("🛒 ወደ ዝርዝር ጨምር"):
+        item_total = price * qty
+        st.session_state.cart.append({"item": selected_item, "qty": qty, "price": price, "subtotal": item_total})
+        st.session_state.total_bill += item_total
+        st.success(f"✅ {selected_item} በዝርዝሩ ውስጥ ተጨምሯል!")
 
-# --- 3. AMERICAN FOOD ---
-elif menu == "3. AMERICAN FOOD":
-    category = st.selectbox("የአሜሪካ ምግብ ይምረጡ", 
-                            ["Cheeseburger (350)", "Salad (80)", "Drinks (25)"], key="us_cat")
-    price = int(category.split('(')[1].split(')')[0])
-    qty = st.number_input("ብዛት", min_value=1, value=1, step=1, key="us_qty")
-    if st.button("ወደ ሂሳብ ጨምር", key="btn3"):
-        st.session_state.total_bill += (price * qty)
-        st.success(f"ታዟል! ለጊዜው ጠቅላላ ሂሳብ: {st.session_state.total_bill} Birr")
-
-# --- 4. ROOM RENT ---
-elif menu == "4. ROOM RENT":
-    floor = st.selectbox("ፎቅ ይምረጡ", 
-                         ["1st Floor (230)", "2nd Floor (280)", "3rd Floor (200)", "4th Floor (380)"], key="room_cat")
-    price = int(floor.split('(')[1].split(')')[0])
-    qty = st.number_input("የቀናት ብዛት", min_value=1, value=1, step=1, key="room_qty")
-    if st.button("ክፍል ያዝ", key="btn4"):
-        st.session_state.total_bill += (price * qty)
-        st.success(f"ክፍል ተይዟል! ጠቅላላ ሂሳብ: {st.session_state.total_bill} Birr")
-
-# --- ደረሰኝ እና ሂሳብ ማሳያ ---
-st.divider()
-st.markdown(f"### 💰 ጠቅላላ ሂሳብ: `{st.session_state.total_bill}` Birr")
-
-col1, col2 = st.columns(2)
-
-with col1:
-    if st.button("🧾 ደረሰኝ አውጣ (Receipt)", key="finish_btn"):
-        if first_name and len(phone) == 10 and phone.isdigit():
-            st.balloons()
-            st.info(f"""
-            **🧾 RECEIPT - ETHIO HOTEL** **Customer:** {first_name} {last_name}  
-            **Phone:** {phone}  
-            **Total Paid:** {st.session_state.total_bill} Birr  
-            ---
-            *ስለመጡ እናመሰግናለን!*
-            """)
-            save_to_history(first_name, phone, st.session_state.total_bill)
-        else:
-            st.error("እባክዎ ስም እና 10 አሃዝ ስልክ ቁጥር በትክክል ያስገቡ!")
-
-with col2:
-    if st.button("🔄 አዲስ ትዕዛዝ (Reset)", key="reset_all"):
+# --- የትዕዛዝ ዝርዝር (Cart Display) ---
+if st.session_state.cart:
+    st.subheader("📝 የእርስዎ ትዕዛዞች")
+    for i, entry in enumerate(st.session_state.cart):
+        st.write(f"{i+1}. {entry['item']} - {entry['qty']} x {entry['price']} = **{entry['subtotal']} Birr**")
+    
+    st.markdown(f"### 💰 ጠቅላላ ሂሳብ: `{st.session_state.total_bill}` Birr")
+    
+    if st.button("🗑 ዝርዝሩን አጥፋ"):
+        st.session_state.cart = []
         st.session_state.total_bill = 0
         st.rerun()
+
+st.divider()
+
+# --- ክፍያ እና ትዕዛዙን መላኪያ ---
+if st.session_state.cart:
+    st.subheader("💳 ክፍያ እና ትዕዛዙን ማጠናቀቂያ")
+    
+    pay_method = st.radio("የክፍያ ዘዴ", ["በጥሬ ገንዘብ", "በባንክ / ቴሌብር"])
+    
+    if pay_method == "በባንክ / ቴሌብር":
+        st.info("🙏 እባክዎ ክፍያውን በዚህ የቴሌብር ቁጥር ይፈጽሙ፦")
+        st.code("0927275152")
+        st.write("ስም፦ Ethio Hotel")
+    
+    if st.button("🚀 ትዕዛዙን ላክ (Complete Order)"):
+        if first_name and len(phone) >= 10:
+            # ለ Telegram መልእክት ማዘጋጀት
+            order_details = ""
+            for item in st.session_state.cart:
+                order_details += f"- {item['item']} ({item['qty']}x{item['price']})\n"
+            
+            full_msg = f"አዲስ ትዕዛዝ ከ {first_name}\nስልክ: {phone}\n\nዝርዝር:\n{order_details}\nጠቅላላ ሂሳብ: {st.session_state.total_bill} Birr"
+            
+            # የእርስዎ Telegram Username (ያለ @)
+            telegram_username = "QenanmosMediaCall" 
+            encoded_msg = urllib.parse.quote(full_msg)
+            # ማሳሰቢያ፡ ቴሌግራም በሊንክ በኩል መልዕክቱን በቀጥታ 'Text' ሳጥን ውስጥ አይከተውም፣ 
+            # ነገር ግን ተጠቃሚው አንተን በቀጥታ እንዲያገኝ ያደርገዋል።
+            telegram_url = f"https://t.me/{telegram_username}"
+            
+            st.balloons()
+            st.success("ትዕዛዝዎ ተመዝግቧል! እባክዎ ከታች ያለውን ሊንክ ተጭነው ትዕዛዙን ለሆቴሉ ይላኩ።")
+            st.info(f"የሚላከው መልዕክት ኮፒ ያድርጉት፦\n\n{full_msg}")
+            st.markdown(f'[👉 ትዕዛዙን በ Telegram ለሆቴሉ ለመላክ እዚህ ይጫኑ]({telegram_url})')
+        else:
+            st.error("እባክዎ መጀመሪያ ስም እና ስልክ ቁጥር በSidebar በኩል ያስገቡ!")
