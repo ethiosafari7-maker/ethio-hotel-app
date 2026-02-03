@@ -65,7 +65,7 @@ first_name = st.text_input("    Enter First Name: ")
 last_name = st.text_input("    Enter Second Name: ")
 # የስልክ ቁጥር ማረጋገጫ (Validation Loop)
 while True:
-    phone = st.number_input("    Enter Phone number (10 digits): ")
+    phone = st.text_input("    Enter Phone number (10 digits): ")
     
     # .isdigit() ቁጥር መሆኑን ያረጋግጣል፣ len() ደግሞ ርዝመቱን ያረጋግጣል
     if phone.isdigit() and len(phone) == 10:
