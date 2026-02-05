@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-# --- የቴሌግራም ቦት ቅንብር (አሁን በሰጠኸኝ መረጃ ተስተካክሏል) ---
+# --- የቴሌግራም ቦት ቅንብር ---
 BOT_TOKEN = "8477843612:AAFQxTf8e5XuVTVOvWPUK9AlMY2KsqwBiDc"
 MY_CHAT_ID = "1312047180"
 
@@ -15,8 +15,33 @@ def send_to_telegram(message):
         return False
 
 # 1. የገጽታ ቅንብር
-st.set_page_config(page_title="Ethio Hotel", page_icon="🏨", layout="centered")
-st.markdown("<h1 style='text-align: center; color: #2E7D32;'>🏨 WELCOME TO ETHIO HOTEL 🇪🇹</h1>", unsafe_allow_html=True)
+st.set_page_config(page_title="MULE TECH", page_icon="💻", layout="centered")
+
+# --- ፕሮፋይል ምስል በራስጌ ላይ (Header Profile Image) ---
+# ምስሉ ክብ እንዲሆን በ CSS ስታይል ተደርጓል
+col1, col2, col3 = st.columns([1, 1, 1])
+with col2:
+    st.markdown(
+        """
+        <style>
+        .profile-img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            border: 3px solid #1E88E5;
+        }
+        </style>
+        """, unsafe_allow_html=True
+    )
+    # ያንተን የፕሮፋይል ፎቶ ሊንክ እዚህ ጋር ተጠቅሜያለሁ
+    st.image("https://r.jina.ai/i/6c21e6be959f400780211832049e776a", width=150)
+
+# MULE TECH በትልቅ ሳይዝ
+st.markdown("<h1 style='text-align: center; color: #1E88E5; font-size: 60px; margin-top: -20px;'>💻 MULE TECH 🇪🇹</h1>", unsafe_allow_html=True)
 
 # 2. የሂሳብ እና የትዕዛዝ ዝርዝር መያዣ (Session State)
 if 'cart' not in st.session_state:
@@ -29,37 +54,39 @@ st.sidebar.header("👤 የደንበኛ መረጃ")
 first_name = st.sidebar.text_input("First Name (ስም)", key="fname")
 phone = st.sidebar.text_input("Phone Number (ስልክ)", key="u_phone")
 
-# --- አገልግሎቶች ---
-st.header("🍴 ምግብና አገልግሎቶችን ይምረጡ")
-menu_option = st.selectbox("የአገልግሎት አይነት", 
-                    ["ይምረጡ", "ETHIOPIAN FOOD", "CHINESE FOOD", "AMERICAN FOOD", "ROOM RENT"], key="main_menu")
+# --- የምንሰጣቸው አገልግሎቶች ---
+st.header("🛠 የምንሰጣቸው አገልግሎቶች")
+menu_option = st.selectbox("አገልግሎት ይምረጡ", 
+                    ["ይምረጡ", "Video Editing", "Graphics Design", "HTTP/Free Internet File Making", "Social Media Management"], key="main_menu")
 
-items_dict = {
-    "ETHIOPIAN FOOD": {"Vegetable": 30, "Meat Foods": 150, "Traditional": 40, "Drinks": 30},
-    "CHINESE FOOD": {"Lamian": 80, "Pasta": 65, "Rice": 70, "Drinks": 20},
-    "AMERICAN FOOD": {"Cheeseburger": 350, "Salad": 80, "Drinks": 25},
-    "ROOM RENT": {"1st Floor": 230, "2nd Floor": 280, "3rd Floor": 200, "4th Floor": 380}
+# የአገልግሎት ዝርዝር እና ዋጋ (ሁሉም 400 ብር)
+services_dict = {
+    "Video Editing": ["YouTube video Editing", "TikTok Video Editing", "Facebook Reel Video Editing", "YouTube Short Video Editing"],
+    "Graphics Design": ["Thumbnail design", "Photo Design"],
+    "HTTP/Free Internet File Making": ["SSH File making", "Xray File Making", "Http File Making", "Slow DNS File Making"],
+    "Social Media Management": ["YouTube", "TikTok", "Telegram", "Facebook"]
 }
 
-if menu_option in items_dict:
-    options = list(items_dict[menu_option].keys())
-    selected_item = st.selectbox(f"{menu_option} ይምረጡ", options)
-    price = items_dict[menu_option][selected_item]
-    qty = st.number_input("ብዛት", min_value=1, value=1, step=1)
+if menu_option in services_dict:
+    st.subheader(f"የ {menu_option} ዝርዝሮች")
+    sub_service = st.selectbox("የአገልግሎት አይነት ይምረጡ", services_dict[menu_option])
+    price = 400 
+    
+    st.write(f"የአገልግሎቱ ዋጋ: **{price} Birr**")
     
     if st.button("🛒 ወደ ዝርዝር ጨምር"):
-        item_total = price * qty
-        st.session_state.cart.append({"item": selected_item, "qty": qty, "price": price, "subtotal": item_total})
-        st.session_state.total_bill += item_total
-        st.success(f"✅ {selected_item} ተጨምሯል!")
+        st.session_state.cart.append({"item": f"{menu_option} ({sub_service})", "price": price})
+        st.session_state.total_bill += price
+        st.success(f"✅ {sub_service} በዝርዝሩ ውስጥ ተጨምሯል!")
 
 # --- የትዕዛዝ ዝርዝር (Cart) ---
 if st.session_state.cart:
-    st.subheader("📝 የእርስዎ ትዕዛዞች")
+    st.divider()
+    st.subheader("📝 የመረጧቸው አገልግሎቶች")
     for i, entry in enumerate(st.session_state.cart):
-        st.write(f"{i+1}. {entry['item']} - {entry['qty']} x {entry['price']} = **{entry['subtotal']} Birr**")
+        st.write(f"{i+1}. {entry['item']} = **{entry['price']} Birr**")
     
-    st.markdown(f"### 💰 ጠቅላላ ሂሳብ: `{st.session_state.total_bill}` Birr")
+    st.markdown(f"### 💰 ጠቅላላ ድምር ሂሳብ: `{st.session_state.total_bill}` Birr")
     
     if st.button("🗑 ዝርዝሩን አጥፋ"):
         st.session_state.cart = []
@@ -80,26 +107,23 @@ if st.session_state.cart:
     
     if st.button("🚀 ትዕዛዙን አሁን ላክ (Complete Order)"):
         if first_name and len(phone) >= 10:
-            # መልዕክቱን ማዘጋጀት
             order_details = ""
             for item in st.session_state.cart:
-                order_details += f"• {item['item']} ({item['qty']} x {item['price']})\n"
+                order_details += f"• {item['item']} - {item['price']} Birr\n"
             
-            full_msg = (f"🔔 *አዲስ ትዕዛዝ ደርሷል!*\n\n"
-                        f"👤 *ስም:* {first_name}\n"
+            full_msg = (f"🔔 *አዲስ የ MULE TECH ትዕዛዝ!*\n\n"
+                        f"👤 *ደንበኛ:* {first_name}\n"
                         f"📞 *ስልክ:* {phone}\n"
                         f"💳 *ክፍያ:* {pay_method}\n\n"
-                        f"🍴 *ዝርዝር:*\n{order_details}\n"
-                        f"💰 *ጠቅላላ ሂሳብ:* {st.session_state.total_bill} Birr")
+                        f"🛠 *የታዘዙ አገልግሎቶች:* \n{order_details}\n"
+                        f"💰 *ጠቅላላ ድምር:* {st.session_state.total_bill} Birr")
             
-            # ቦቱ መልዕክቱን በራሱ ለአንተ ይልካል
             if send_to_telegram(full_msg):
                 st.balloons()
-                st.success("✅ ትዕዛዝዎ በተሳካ ሁኔታ ተልኳል! በቅርቡ እንደውላለን።")
-                # ከላከ በኋላ ዝርዝሩን ያጸዳል
-                st.session_state.cart = []
+                st.success("✅ ትዕዛዝዎ በተሳካ ሁኔታ ለ MULE TECH ተልኳል! በቅርቡ እናነጋግርዎታለን።")
+                st.session_state.cart = [] 
                 st.session_state.total_bill = 0
             else:
-                st.error("❌ መልዕክቱ አልተላከም። ቦትዎ ላይ '/start' ማለታቸውን ያረጋግጡ።")
+                st.error("❌ መልዕክቱ አልተላከም። እባክዎ በድጋሚ ይሞክሩ።")
         else:
             st.error("እባክዎ መጀመሪያ ስም እና ትክክለኛ ስልክ ቁጥር ያስገቡ!")
